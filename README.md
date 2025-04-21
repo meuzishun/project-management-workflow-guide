@@ -5,27 +5,42 @@ A professional-style workflow for contributors and reviewers to simulate working
 ## Table of Contents
 
 - [Contributor Workflow](#contributor-workflow)
+  - [Pick a Jira Ticket](#pick-a-jira-ticket)
+  - [Sync with Remote main](#sync-with-remote-main)
+  - [Create a New Branch](#create-a-new-branch)
+  - [Do the Work](#do-the-work)
+  - [Rebase with main OFTEN](#rebase-with-main-often)
+  - [Squash Commits](#squash-commits)
+  - [Push Your Branch](#push-your-branch)
+  - [Handle Review Feedback](#handle-review-feedback)
+  - [After Merge](#after-merge)
 - [Reviewer Workflow](#reviewer-workflow)
+  - [Get Assigned a PR](#get-assigned-a-pr)
+  - [Pull the Branch Locally](#pull-the-branch-locally)
+  - [Test the Code Locally](#test-the-code-locally)
+  - [Review the PR on GitHub](#review-the-pr-on-gitHub)
+  - [If Approved](#if-approved)
+  - [Clean Up Locally](#clean-up-locally)
 
 ## Contributor Workflow
 
-1. **Pick a Jira Ticket**
+### Pick a Jira Ticket
 
-   - Move it to "In Progress".
-   - Assign it to yourself.
+- Move it to "In Progress".
+- Assign it to yourself.
 
-2. **Sync with Remote `main`**
+### Sync with Remote main
 
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
+```bash
+git checkout main
+git pull origin main
+```
 
-3. Create a New Branch
+### Create a New Branch
 
-   ```
-   git checkout -b feat/ABC-123-short-description
-   ```
+```
+git checkout -b feat/ABC-123-short-description
+```
 
 - Naming format:
 
@@ -33,7 +48,7 @@ A professional-style workflow for contributors and reviewers to simulate working
   - bugfix/ABC-456-form-validation
   - chore/ABC-789-update-deps
 
-4. Do the Work
+### Do the Work
 
 - Commit often with descriptive messages:
 
@@ -41,12 +56,14 @@ A professional-style workflow for contributors and reviewers to simulate working
   git commit -m "ABC-123: Add login form with validation"
   ```
 
-5. Rebase with main **Often**
+### Rebase with main OFTEN
 
-   ```
-   git fetch origin
-   git rebase origin/main
-   ```
+Rebase keeps a linear history and avoids noisy merge commits. Perfect for clean PRs.
+
+```
+git fetch origin
+git rebase origin/main
+```
 
 - If there are conflicts, Git will pause and let you fix them:
 
@@ -62,21 +79,74 @@ A professional-style workflow for contributors and reviewers to simulate working
   git rebase --abort  # bail out and go back to how things were
   ```
 
-6. Squash Commits (Before Push)
+### Squash Commits
 
-   ```
-   git rebase -i origin/main
-   ```
+Find out how many commits you are ahead from main:
 
-7. Push Your Branch
+```
+git log --oneline origin/main..HEAD
+```
 
-   ```
-   git push origin feat/ABC-123-short-description
-   ```
+Use the number of commits from the step above:
 
-8. Create a Pull Request
+```
+git rebase -i HEAD~4
+```
 
-- Link to the Jira ticket.
+This opens up an editor that looks like:
+
+```
+pick 1a2b3c4 Add login form layout
+pick 2b3c4d5 Add validation logic
+pick 3c4d5e6 Fix button alignment
+pick 4d5e6f7 Rename variables for clarity
+```
+
+Change all but the first pick to squash or s:
+
+```
+pick 1a2b3c4 Add login form layout
+squash 2b3c4d5 Add validation logic
+squash 3c4d5e6 Fix button alignment
+squash 4d5e6f7 Rename variables for clarity
+```
+
+Edit the commit message (if prompted), Git will then show a prompt like:
+
+```
+# This is a combination of 4 commits.
+# The first commit's message is:
+Add login form layout
+
+# The commit message for your squash commit:
+Add login form layout
+
+# You can edit this to summarize all the changes:
+```
+
+Edit this to something clean like:
+
+```
+ABC-123: Add login form layout with validation and cleanup
+```
+
+Now force push (if branch was pushed earlier):
+
+```
+git push --force-with-lease
+```
+
+Use --force-with-lease instead of --force — it’s safer because it checks if your remote was changed since you last pulled.
+
+### Push Your Branch
+
+```
+git push origin feat/ABC-123-short-description
+```
+
+### Create a Pull Request
+
+- Link to the Jira ticket by including the ticket ID in the PR title and description, or use Jira/GitHub integration for automatic linking.
 
 - Include:
 
@@ -88,13 +158,13 @@ A professional-style workflow for contributors and reviewers to simulate working
 
 - Assign yourself as the author and pick a teammate to review.
 
-9. Handle Review Feedback
+### Handle Review Feedback
 
 - Push updates as needed.
 
 - Rebase again if necessary.
 
-10. After Merge
+### After Merge
 
 ```
 git checkout main
@@ -103,24 +173,24 @@ git branch -d feat/ABC-123-short-description
 git remote prune origin
 ```
 
-# Reviewer Workflow
+## Reviewer Workflow
 
-1. Get Assigned a PR
+### Get Assigned a PR
 
 - React with excitement 😅
 
-2. Pull the Branch Locally
+### Pull the Branch Locally
 
 ```
 git fetch origin
 git checkout feat/ABC-123-short-description
 ```
 
-3. Test the Code Locally
+### Test the Code Locally
 
 - Run it. Try it out.
 
-4. Review the PR on GitHub
+### Review the PR on GitHub
 
 - Use inline comments.
 - Leave constructive feedback.
@@ -128,22 +198,22 @@ git checkout feat/ABC-123-short-description
   - Approve
   - Request Changes
 
-5. If Approved
+### If Approved
 
 - Merge using Squash and Merge.
 - Delete the remote branch.
 
-6. Clean Up Locally
+### Clean Up Locally
 
-   ```
-   git checkout main
-   git pull origin main
-   git branch -d feat/ABC-123-short-description
-   ```
+```
+git checkout main
+git pull origin main
+git branch -d feat/ABC-123-short-description
+```
 
 ✅ Team Best Practices
 
-- Always include the Jira ticket ID in branch names and commits.
+- Always include the Jira ticket ID in branch names and commit.
 - Make small, focused commits.
 - Rebase often to keep your branch conflict-free.
 - Use PR templates and follow code review etiquette.
