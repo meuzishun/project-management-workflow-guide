@@ -81,19 +81,25 @@ git rebase origin/main
 
 ### Squash Commits
 
-Find out how many commits you are ahead from main:
+If you've made multiple commits while working on a feature, it's best to clean them up before merging. This keeps the project history easy to read.
 
-```
+#### 1. Check how many commits you’re ahead of `main`:
+
+```bash
 git log --oneline origin/main..HEAD
 ```
 
-Use the number of commits from the step above:
+Count the number of commits listed.
 
-```
+#### 2. Start an interactive rebase:
+
+Replace `4` with the number of commits you saw above.
+
+```bash
 git rebase -i HEAD~4
 ```
 
-This opens up an editor that looks like:
+This will open your editor with a list like this:
 
 ```
 pick 1a2b3c4 Add login form layout
@@ -102,7 +108,7 @@ pick 3c4d5e6 Fix button alignment
 pick 4d5e6f7 Rename variables for clarity
 ```
 
-Change all but the first pick to squash or s:
+#### 3. Change all but the first `pick` to `squash` or `s`:
 
 ```
 pick 1a2b3c4 Add login form layout
@@ -111,7 +117,11 @@ squash 3c4d5e6 Fix button alignment
 squash 4d5e6f7 Rename variables for clarity
 ```
 
-Edit the commit message (if prompted), Git will then show a prompt like:
+This tells Git to combine all of those commits into one.
+
+#### 4. Edit the commit message:
+
+Git will then open a new editor window. You'll see something like this:
 
 ```
 # This is a combination of 4 commits.
@@ -124,25 +134,23 @@ Add login form layout
 # You can edit this to summarize all the changes:
 ```
 
-Edit this to something clean like:
+Update it to something clear and descriptive:
 
 ```
-ABC-123: Add login form layout with validation and cleanup
+ABC-123: Add login form with validation and cleanup
 ```
 
-Now force push (if branch was pushed earlier):
+Save and close the editor. Git will finish squashing the commits.
 
-```
+#### 5. Push your changes:
+
+If you've already pushed this branch before, you'll need to force push:
+
+```bash
 git push --force-with-lease
 ```
 
-Use --force-with-lease instead of --force — it’s safer because it checks if your remote was changed since you last pulled.
-
-### Push Your Branch
-
-```
-git push origin feat/ABC-123-short-description
-```
+> ✅ Use `--force-with-lease` instead of `--force` — it’s safer because it prevents you from overwriting someone else’s work by accident.
 
 ### Create a Pull Request
 
